@@ -1,0 +1,172 @@
+	org 246
+;======= Input =======
+primes0: db 0
+primes1: db 0
+primes2: db 0
+;==== Auxiliaries ====
+div: db 0
+rest: db 0
+;===== Constants =====
+cons_0: db 0
+cons_1: db 1
+cons_2: db 2
+cons_3: db 3
+
+	org 00
+
+;===========================================================
+;                        primes0
+;===========================================================
+LDA primes0
+JZ is_prime_0		; if(primes==0), go to "end"
+JN not_prime0		; if(primes<0), primes = 0
+; check if it is number 1
+SUB cons_1		
+JZ is_prime_0		; if(primes-1=0), go to "end"
+; check if it is number 2
+SUB cons_1		
+JZ is_prime_0		; if(primes-2=0), go to "end"
+; check if it is a pair number
+LDA primes0
+ROR			
+JNC not_prime0		; if(C==0), it is a pair number (not prime)
+; if it is not pair, try finding dividers 
+ROL
+STA rest		; rest = primes
+LDA cons_3
+STA div			; div = 3 (first number to try)
+; loop to divide (multiple subtractions)
+loop_0b:
+LDA rest		
+SUB div
+STA rest		; rest = rest - div
+JZ check_prime_0	; if(rest-div==0), check if div==primes (if so, it is prime)
+JN try_next_0		; if(rest+div<0), try next, as div is not a divider of primes
+JMP loop_0b		; if(rest+div>0), subtract again
+
+try_next_0:
+
+LDA div			
+ADD cons_2
+STA div			; div+=2
+LDA primes0
+STA rest		; rest = primes
+JMP loop_0b		; try again sucessive subtractions with |div|
+
+check_prime_0:
+
+LDA primes0
+SUB div
+JZ is_prime_0
+
+not_prime0:
+LDA cons_0
+STA primes0
+
+is_prime_0:
+
+
+;===========================================================
+;                        primes1
+;===========================================================
+LDA primes1
+JZ is_prime_1		; if(primes==0), go to "end"
+JN not_prime1		; if(primes<0), primes = 0
+; check if it is number 1
+SUB cons_1		
+JZ is_prime_1		; if(primes-1=0), go to "end"
+; check if it is number 2
+SUB cons_1		
+JZ is_prime_1		; if(primes-2=0), go to "end"
+; check if it is a pair number
+LDA primes1
+ROR			
+JNC not_prime1		; if(C==0), it is a pair number (not prime)
+; if it is not pair, try finding dividers 
+ROL
+STA rest		; rest = primes
+LDA cons_3
+STA div			; div = 3 (first number to try)
+; loop to divide (multiple subtractions)
+loop_1b:
+LDA rest		
+SUB div
+STA rest		; rest = rest - div
+JZ check_prime_1	; if(rest-div==0), check if div==primes (if so, it is prime)
+JN try_next_1		; if(rest+div<0), try next, as div is not a divider of primes
+JMP loop_1b		; if(rest+div>0), subtract again
+
+try_next_1:
+
+LDA div			
+ADD cons_2
+STA div			; div+=2
+LDA primes1
+STA rest		; rest = primes
+JMP loop_1b		; try again sucessive subtractions with |div|
+
+check_prime_1:
+
+LDA primes1
+SUB div
+JZ is_prime_1
+
+not_prime1:
+LDA cons_0
+STA primes1
+
+is_prime_1:
+
+
+;===========================================================
+;                        primes2
+;===========================================================
+LDA primes2
+JZ is_prime_2		; if(primes==0), go to "end"
+JN not_prime2		; if(primes<0), primes = 0
+; check if it is number 1
+SUB cons_1		
+JZ is_prime_2		; if(primes-1=0), go to "end"
+; check if it is number 2
+SUB cons_1		
+JZ is_prime_2		; if(primes-2=0), go to "end"
+; check if it is a pair number
+LDA primes2
+ROR			
+JNC not_prime2		; if(C==0), it is a pair number (not prime)
+; if it is not pair, try finding dividers 
+ROL
+STA rest		; rest = primes
+LDA cons_3
+STA div			; div = 3 (first number to try)
+; loop to divide (multiple subtractions)
+loop_2b:
+LDA rest		
+SUB div
+STA rest		; rest = rest - div
+JZ check_prime_2	; if(rest-div==0), check if div==primes (if so, it is prime)
+JN try_next_2		; if(rest+div<0), try next, as div is not a divider of primes
+JMP loop_2b		; if(rest+div>0), subtract again
+
+try_next_2:
+
+LDA div			
+ADD cons_2
+STA div			; div+=2
+LDA primes2
+STA rest		; rest = primes
+JMP loop_2b		; try again sucessive subtractions with |div|
+
+check_prime_2:
+
+LDA primes2
+SUB div
+JZ is_prime_2
+
+not_prime2:
+LDA cons_0
+STA primes2
+
+is_prime_2:
+;============ END =============
+HLT

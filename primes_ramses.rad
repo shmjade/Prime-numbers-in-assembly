@@ -1,0 +1,56 @@
+	ORG 128
+primes: dab 0,0,0,0
+div: db 0				; cannot transfer data between registers	
+MAX: db 4
+; --------- main ----------
+	ORG 00
+	LDR X, MAX			; x=MAX
+	SUB X, #1			; x=MAX-1
+loop:					; for(x=MAX-1; x>=0; x--)
+	JSR verify_prime		; subroutine that changes number to 0 if it's not prime	
+	SUB X, #1			; x--
+	JN end				; if(x<0), finish loop (go to end)
+	JMP loop
+end:
+	LDR B, #17
+	HLT
+; ------- subroutine ------
+verify_prime:
+	NOP
+	LDR A, primes,X			; A=primes[x]
+	JZ end_subr			; if(primes==0), go to end of subroutine
+	JN not_prime			; if(primes<0), primes = 0
+	; check if it is number 1
+	SUB A, #1
+	JZ end_subr			; number 1 is a prime number (keep it)
+	; check if it is number 2
+	SUB A, #1
+	JZ end_subr			; number 2 is a prime number (keep it)
+	; check if the number is pair
+	LDR B, primes,X
+	SHR B
+	JC not_pair			; if(C==1), it's not a pair number (verify if it is prime)
+	JMP not_prime			; if(C==0), it's a pair number (not prime)			
+not_pair:
+	LDR B, #3
+	STR B, div			; first prime number to check divisibility: 3
+	LDR A, primes,X
+loop_divisibility:
+	SUB A, div
+	JZ check_equal			; check if it is prime (B is equal to primes[x]) or not (divided by a number that is not 1 or itself)
+	JN try_next_num			; if it is not divisible by B, check if it is divisible by B+2
+	JMP loop_divisibility		; if(A>0), subtract again
+try_next_num:
+	ADD B, #2			; because it is not pair, try only odd numbers
+	STR B, div
+	LDR A, primes,X			; A = primes[x]
+	JMP loop_divisibility
+check_equal:
+	LDR A, primes,X
+	SUB A, div
+	JZ end_subr			; if(B==primes[x]), it is prime (primes[x] is only divided by 1 and itself)
+not_prime:
+	LDR B, #0
+	STR B, primes,X
+end_subr:
+	JMP verify_prime,I
